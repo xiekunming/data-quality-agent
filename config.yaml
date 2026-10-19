@@ -1,0 +1,48 @@
+# 数据质量排查 Agent 配置
+
+airflow:
+  logs_dir: ~/airflow/logs        # 本地日志目录（首选读取方式）
+  base_url: http://127.0.0.1:8080 # REST API 兜底用（basic auth），留空则不启用
+  # 账号走 .env：AIRFLOW_USERNAME / AIRFLOW_PASSWORD
+
+llm:
+  model: glm-5.3                  # 以开放平台模型列表为准（推理模型，max_tokens 需含推理预算）
+  base_url: https://open.bigmodel.cn/api/paas/v4
+  temperature: 0.1
+  max_tokens: 4096
+  timeout: 120
+  retries: 2
+  thinking: ''                    # 思考参数默认值（JSON 字符串，随每次调用发送；留空=不发，走网关默认）
+                                  # GLM 开放平台: '{"type": "enabled"}' / '{"type": "disabled"}'
+                                  # 私有化部署网关（企业自建）通常支持低/中/高档位：具体字段名以网关文档为准，
+                                  # 例如 effort 风格 '{"effort": "high"}'，拿到文档填这里即可
+
+limits:
+  concurrency: 2                  # 同时进行的 LLM 分析数
+  analysis_timeout: 180           # 单次分析超时（秒）
+  cache_ttl_hours: 12             # 同一 run 的结论缓存有效期（小时）
+
+extract:
+  sql_max_chars: 20000            # SQL 段最大字符数（超出做 头8000+尾4000 截断）
+  error_max_chars: 12000          # 错误段最大字符数（超出做 头4000+尾6000 截断）
+
+storage:
+  backend: starrocks              # starrocks（agent_meta，凭据走 .env 的 SR_*）| sqlite
+  db_path: data/dq_agent.db       # sqlite 后端/降级时的本地库
+
+tools:                            # 数据核查工具（function calling，只读）
+  enabled: true
+  business_db: demo_dw            # 核查默认库（可被 .env 的 SR_BUSINESS_DB 覆盖；账号须对业务库只读）
+  max_rows: 50
+  query_timeout: 30
+  max_rounds: 3                   # 工具循环轮数上限
+  thinking: '{"type": "disabled"}'  # 工具轮次思考档位（JSON 字符串，覆盖 llm.thinking；提速用）
+                                  # 私有化网关低档示例: '{"effort": "low"}'（字段名以文档为准）；留空=用默认
+
+dingtalk:
+  # 凭据从 .env 读取：DINGTALK_CLIENT_ID / DINGTALK_CLIENT_SECRET
+
+alert_server:
+  enabled: true                   # 本地预采集服务：收到告警即提前构建快照（不调 LLM）
+  host: 127.0.0.1
+  port: 8765

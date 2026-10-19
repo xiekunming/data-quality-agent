@@ -1,0 +1,32 @@
+# 错误分类法（唯一事实源：提示词构建、category 校验、中文标签三处共用）
+# 修改后下一次分析立即生效，无需重启服务。
+# clues 只是常见锚点示例，不是匹配规则——模型对未列出的错误按语义就近归类。
+
+categories:
+  - key: upstream_data_missing
+    label: 上游数据未就绪
+    clues: 依赖超时、sensor 等待上游分区直至 timeout、上游任务先失败导致本任务连锁失败、上游分区/快照缺失
+
+  - key: data_quality
+    label: 数据质量问题
+    clues: 非空约束失败、脏数据（格式/长度/非法值）、空分区/空快照、主键或唯一键冲突、金额/日期格式不符、对账不平
+
+  - key: resource
+    label: 资源问题（内存/超时）
+    clues: OOM、query_timeout/执行超时被杀、进程被 Killed、资源队列排队等待
+
+  - key: permission_connection
+    label: 权限/连接问题
+    clues: Access denied、密码过期、Connection refused/连接超时、表被锁等待、权限不足（错误码 1142/1143）
+
+  - key: code_schema
+    label: 代码/Schema 问题
+    clues: 1064 语法/分析错误、Column cannot be resolved、Unknown column、schema 变更后 SQL 不匹配、Python 代码报错（AttributeError/TypeError 等）
+
+  - key: infra
+    label: 基础设施故障
+    clues: 调度器异常、存储/BE 节点故障、数据库引擎内部错误、worker 失联
+
+  - key: other
+    label: 其他/未分类
+    clues: 以上都不是时兜底（尽量少用）
