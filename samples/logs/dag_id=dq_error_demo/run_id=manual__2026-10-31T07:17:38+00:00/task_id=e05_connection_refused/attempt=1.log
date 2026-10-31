@@ -1,0 +1,143 @@
+[2026-10-31T15:17:40.654+0800] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-10-31T15:17:40.668+0800] {taskinstance.py:2614} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dq_error_demo.e05_connection_refused manual__2026-10-31T07:17:38+00:00 [queued]>
+[2026-10-31T15:17:40.682+0800] {taskinstance.py:2614} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dq_error_demo.e05_connection_refused manual__2026-10-31T07:17:38+00:00 [queued]>
+[2026-10-31T15:17:40.682+0800] {taskinstance.py:2867} INFO - Starting attempt 1 of 1
+[2026-10-31T15:17:40.706+0800] {taskinstance.py:2890} INFO - Executing <Task(SQLExecuteQueryOperator): e05_connection_refused> on 2026-10-31 07:17:38+00:00
+[2026-10-31T15:17:40.710+0800] {standard_task_runner.py:72} INFO - Started process 9825 to run task
+[2026-10-31T15:17:40.719+0800] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'dq_error_demo', 'e05_connection_refused', 'manual__2026-10-31T07:17:38+00:00', '--job-id', '74', '--raw', '--subdir', 'DAGS_FOLDER/dq_error_demo.py', '--cfg-path', '/var/folders/hk/95snd2qd2xv8bm17hw1sy0p00000gn/T/tmpjtnp4fct']
+[2026-10-31T15:17:40.724+0800] {standard_task_runner.py:105} INFO - Job 74: Subtask e05_connection_refused
+[2026-10-31T15:17:40.821+0800] {task_command.py:467} INFO - Running <TaskInstance: dq_error_demo.e05_connection_refused manual__2026-10-31T07:17:38+00:00 [running]> on host localhost
+[2026-10-31T15:17:40.882+0800] {taskinstance.py:3134} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='dq_agent' AIRFLOW_CTX_DAG_ID='dq_error_demo' AIRFLOW_CTX_TASK_ID='e05_connection_refused' AIRFLOW_CTX_EXECUTION_DATE='2026-10-31T07:17:38+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-10-31T07:17:38+00:00'
+[2026-10-31T15:17:40.882+0800] {taskinstance.py:732} INFO - ::endgroup::
+[2026-10-31T15:17:40.893+0800] {sql.py:295} INFO - Executing: SELECT 1
+[2026-10-31T15:17:40.900+0800] {base.py:84} INFO - Retrieving connection 'dq_bad_conn'
+[2026-10-31T15:17:40.907+0800] {base.py:84} INFO - Retrieving connection 'dq_bad_conn'
+[2026-10-31T15:17:41.067+0800] {taskinstance.py:3313} ERROR - Task failed with e***ception
+Traceback (most recent call last):
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+_mysql_connector.MySQLInterfaceError: Can't connect to MySQL server on '127.0.0.1:9999' (61)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 768, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 734, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/providers/common/sql/operators/sql.py", line 301, in execute
+    output = hook.run(
+             ^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/providers/common/sql/hooks/sql.py", line 463, in run
+    with self._create_autocommit_connection(autocommit) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/miniforge3/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/providers/common/sql/hooks/sql.py", line 576, in _create_autocommit_connection
+    with closing(self.get_conn()) as conn:
+                 ^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/providers/mysql/hooks/mysql.py", line 237, in get_conn
+    return mysql.connector.connect(**conn_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/abstracts.py", line 1604, in connect
+    self._open_connection()
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 360, in _open_connection
+    raise get_mysql_exception(
+mysql.connector.errors.DatabaseError: 2003 (HY000): Can't connect to MySQL server on '127.0.0.1:9999' (61)
+[2026-10-31T15:17:41.076+0800] {taskinstance.py:1226} INFO - Marking task as FAILED. dag_id=dq_error_demo, task_id=e05_connection_refused, run_id=manual__2026-10-31T07:17:38+00:00, e***ecution_date=20261031T071738, start_date=20261031T071740, end_date=20261031T071741
+[2026-10-31T15:17:41.095+0800] {taskinstance.py:341} INFO - ::group::Post task e***ecution logs
+[2026-10-31T15:17:41.096+0800] {standard_task_runner.py:124} ERROR - Failed to e***ecute job 74 for task e05_connection_refused (2003 (HY000): Can't connect to MySQL server on '127.0.0.1:9999' (61); 9825)
+Traceback (most recent call last):
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+_mysql_connector.MySQLInterfaceError: Can't connect to MySQL server on '127.0.0.1:9999' (61)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py", line 117, in _start_by_fork
+    ret = args.func(args, dag=self.dag)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/cli/cli_config.py", line 49, in command
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/utils/cli.py", line 116, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/cli/commands/task_command.py", line 483, in task_run
+    task_return_code = _run_task_by_selected_method(args, _dag, ti)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/cli/commands/task_command.py", line 256, in _run_task_by_selected_method
+    return _run_raw_task(args, ti)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/cli/commands/task_command.py", line 341, in _run_raw_task
+    return ti._run_raw_task(
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/utils/session.py", line 97, in wrapper
+    return func(*args, session=session, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 3006, in _run_raw_task
+    return _run_raw_task(
+           ^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 274, in _run_raw_task
+    TaskInstance._execute_task_with_callbacks(
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 3161, in _execute_task_with_callbacks
+    result = self._execute_task(context, task_orig)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 3185, in _execute_task
+    return _execute_task(self, context, task_orig)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 768, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 734, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/providers/common/sql/operators/sql.py", line 301, in execute
+    output = hook.run(
+             ^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/providers/common/sql/hooks/sql.py", line 463, in run
+    with self._create_autocommit_connection(autocommit) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/miniforge3/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/providers/common/sql/hooks/sql.py", line 576, in _create_autocommit_connection
+    with closing(self.get_conn()) as conn:
+                 ^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/airflow/providers/mysql/hooks/mysql.py", line 237, in get_conn
+    return mysql.connector.connect(**conn_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/abstracts.py", line 1604, in connect
+    self._open_connection()
+  File "/home/airflow/.venv-airflow/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 360, in _open_connection
+    raise get_mysql_exception(
+mysql.connector.errors.DatabaseError: 2003 (HY000): Can't connect to MySQL server on '127.0.0.1:9999' (61)
+[2026-10-31T15:17:41.140+0800] {local_task_job_runner.py:266} INFO - Task exited with return code 1
+[2026-10-31T15:17:41.160+0800] {taskinstance.py:3901} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-10-31T15:17:41.161+0800] {local_task_job_runner.py:245} INFO - ::endgroup::
