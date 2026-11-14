@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- macOS launchd 服务模板：开机自启 + 崩溃自动重启（安装方法见 docs/operations.md）-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.dqagent.bot</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>___PROJECT_DIR___/scripts/run_bot.sh</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>___PROJECT_DIR___</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <!-- 非正常退出（崩溃）才自动重启；run_bot.sh 单实例守卫的 exit 0 不触发重启 -->
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+    <key>StandardOutPath</key>
+    <string>___PROJECT_DIR___/logs/bot.log</string>
+    <key>StandardErrorPath</key>
+    <string>___PROJECT_DIR___/logs/bot.log</string>
+    <!-- ⚠️ bot.log 由 launchd 自己创建并独占写入；其他进程（终端 nohup/手动脚本）
+         不得向它重定向输出，否则 launchd 重启时拒绝写入（provenance/macl，exit 78）。
+         手动启动的日志走 logs/bot-manual.log（见 run_bot.sh / start_bot.sh）-->
+</dict>
+</plist>

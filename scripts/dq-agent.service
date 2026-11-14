@@ -1,0 +1,23 @@
+# systemd 服务模板（Linux 服务器）
+# 安装：sudo cp dq-agent.service /etc/systemd/system/ && sudo systemctl daemon-reload
+#       sudo systemctl enable --now dq-agent
+# 注意：WorkingDirectory/路径按实际位置修改；EnvironmentFile 权限 600（root:服务用户）
+
+[Unit]
+Description=DQ-Agent: 数仓任务故障排查机器人（钉钉@触发）
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dqagent
+Group=dqagent
+WorkingDirectory=/opt/dq-agent
+EnvironmentFile=/etc/dq-agent.env
+ExecStart=/opt/dq-agent/.venv/bin/python -m dq_agent
+Restart=always
+RestartSec=10
+# 单实例由 systemd 保证（一个服务只有一个实例；勿手动重复启动避免钉钉 Stream 互踢）
+
+[Install]
+WantedBy=multi-user.target
